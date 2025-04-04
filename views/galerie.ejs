@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Galerie - Pantheon RP</title>
+  <link rel="stylesheet" href="/css/style_global.css">
+  <link rel="stylesheet" href="/css/style_galerie.css">
+</head>
+<body>
+
+  <%- include('partials/header') %>
+
+  <div class="gallery-container">
+    <h1>Galerie du Serveur</h1>
+
+    <% if (isModerator) { %>
+      <div class="admin-box">
+        🎯 Espace staff : <a href="/admin/galerie" class="upload-link">Accéder au panneau de gestion</a>
+      </div>
+    <% } %>
+
+    <div class="gallery-grid">
+      <% if (medias && medias.length > 0) { %>
+        <% medias.forEach(media => { %>
+          <div class="gallery-item">
+            <% if (media.type === 'image') { %>
+              <img src="/uploads/galerie/<%= media.filename %>" alt="Image RP">
+            <% } else { %>
+              <video controls>
+                <source src="/uploads/galerie/<%= media.filename %>" type="video/mp4">
+                Votre navigateur ne supporte pas la vidéo.
+              </video>
+            <% } %>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p style="text-align:center; color:#ccc;">Aucun média n'est encore disponible.</p>
+      <% } %>
+    </div>
+  </div>
+
+  <%- include('partials/footer') %>
+
+</body>
+</html>
+

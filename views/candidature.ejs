@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Candidature - Pantheon RP</title>
+  <link rel="stylesheet" href="/css/style_global.css">
+  <link rel="stylesheet" href="/css/style_formulaire.css">
+</head>
+<body>
+
+  <%- include('partials/header') %>
+
+  <div class="form-container">
+    <h1>Formulaire de Candidature</h1>
+
+    <% if (candidatureExistante) { %>
+      <% if (candidature.statut === 'nouvelle') { %>
+        <p class="alert">📩 Vous avez déjà soumis une demande. Elle est en cours de traitement par le staff.</p>
+      <% } else if (candidature.statut === 'entretien') { %>
+        <p class="alert">🎤 Votre formulaire de demande a été accepté, présentez vous dans le vocal attente douane lorsque ces dernières sont ouvertes.</p>
+      <% } else { %>
+        <p class="alert">⏳ Votre candidature est en cours de traitement.</p>
+      <% } %>
+    <% } else { %>
+      <form action="/candidature" method="POST">
+        <label for="pseudo">Pseudo Discord</label>
+        <input type="text" id="pseudo" name="pseudo" value="<%= user.username %>" readonly>
+
+        <label for="discordId">ID Discord</label>
+        <input type="text" id="discordId" name="discordId" value="<%= user.id %>" readonly>
+
+        <label for="birthdate">Date de naissance</label>
+        <input type="date" id="birthdate" name="birthdate" required>
+
+        <label for="experience">Expérience RP précédente</label>
+        <textarea id="experience" name="experience" rows="4" required></textarea>
+
+        <label for="personnage">Nom et Prénom RP</label>
+        <input type="text" id="personnage" name="personnage" required>
+
+        <label for="typePersonnage">Type de personnage que tu souhaites jouer</label>
+        <select id="typePersonnage" name="typePersonnage" required>
+          <option value="">-- Sélectionner --</option>
+          <option value="Légal">Légal</option>
+          <option value="Civil">Civil</option>
+          <option value="Illégal">Illégal</option>
+        </select>
+
+        <label for="background">Lien de ton background RP (Google Docs / Canva)</label>
+        <input type="url" id="background" name="background" placeholder="https://..." required>
+
+        <label for="motivation">Pourquoi veux-tu rejoindre Pantheon RP ?</label>
+        <textarea id="motivation" name="motivation" rows="4" required></textarea>
+
+        <button type="submit">Envoyer ma candidature</button>
+      </form>
+    <% } %>
+  </div>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    const form = document.querySelector('form');
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        const backgroundField = document.getElementById('background');
+        const backgroundLink = backgroundField.value.trim();
+
+        const validPrefixes = [
+          'https://docs.google.com',
+          'https://www.canva.com'
+        ];
+
+        backgroundField.classList.remove('invalid');
+
+        const isValid = validPrefixes.some(prefix => backgroundLink.startsWith(prefix));
+
+        if (!isValid) {
+          e.preventDefault();
+          backgroundField.classList.add('invalid');
+          alert("Le lien du background RP doit commencer par 'https://docs.google.com' ou 'https://www.canva.com'.");
+          backgroundField.focus();
+        }
+      });
+    }
+  </script>
+</body>
+</html>

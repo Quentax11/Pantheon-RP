@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Panneau Modérateur - Pantheon RP</title>
+  <link rel="stylesheet" href="/css/style_global.css">
+  <link rel="stylesheet" href="/css/style_espace_staff.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <div class="form-container">
+      <h1 class="section-title">📋 Panneau de gestion des candidatures</h1>
+
+      <!-- Bloc : Demande de WhiteList -->
+      <div class="category-block" id="block-nouvelle">
+        <h2 class="category-title">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="toggle-icon fa-solid fa-angle-down" data-target="wl-nouvelle" style="cursor: pointer; color: #3498db;"></i>
+            <span>📩 Demande de WhiteList</span>
+          </div>
+          <span class="search-inline">
+            <i class="fa fa-search search-icon"></i>
+            <input type="text" placeholder="Rechercher..." onkeyup="filterCards(this, 'wl-nouvelle')">
+          </span>
+        </h2>
+        <div id="wl-nouvelle" style="display: block;">
+          <% const nouvelles = applications.filter(app => app.statut === 'nouvelle'); %>
+          <% if (nouvelles.length === 0) { %>
+            <p>Aucune candidature en attente.</p>
+          <% } else { %>
+            <% nouvelles.forEach(app => { %>
+              <div class="candidature-card">
+                <p><strong>Pseudo Discord :</strong> <%= app.pseudo %></p>
+                <p><strong>ID Discord :</strong> <%= app.discordId %></p>
+                <p><strong>Date de naissance :</strong> <%= app.birthdate %></p>
+                <p><strong>Expérience RP :</strong> <%= app.experience %></p>
+                <p><strong>Nom & Prénom RP :</strong> <%= app.personnage %></p>
+                <p><strong>Type de personnage :</strong> <%= app.typePersonnage %></p>
+                <p><strong>Background RP :</strong> <a href="<%= app.background %>" target="_blank"><%= app.background %></a></p>
+                <p><strong>Motivation :</strong> <%= app.motivation %></p>
+
+                <div class="moderation-buttons">
+                  <form action="/moderators/treatment" method="POST">
+                    <input type="hidden" name="id" value="<%= app.id %>">
+                    <input type="hidden" name="action" value="accepter">
+                    <button type="submit">✅ Accepter</button>
+                  </form>
+                  <form action="/moderators/treatment" method="POST">
+                    <input type="hidden" name="id" value="<%= app.id %>">
+                    <input type="hidden" name="action" value="refuser">
+                    <button type="submit">❌ Refuser</button>
+                  </form>
+                </div>
+              </div>
+            <% }) %>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Bloc : Entretien en attente -->
+      <div class="category-block" id="block-entretien">
+        <h2 class="category-title">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="toggle-icon fa-solid fa-angle-down" data-target="wl-entretien" style="cursor: pointer; color: #e67e22;"></i>
+            <span>🎤 Entretien en attente</span>
+          </div>
+          <span class="search-inline">
+            <i class="fa fa-search search-icon"></i>
+            <input type="text" placeholder="Rechercher..." onkeyup="filterCards(this, 'wl-entretien')">
+          </span>
+        </h2>
+        <div id="wl-entretien" style="display: block;">
+          <% const entretiens = applications.filter(app => app.statut === 'entretien'); %>
+          <% if (entretiens.length === 0) { %>
+            <p>Aucune candidature en attente d'entretien.</p>
+          <% } else { %>
+            <% entretiens.forEach(app => { %>
+              <div class="candidature-card">
+                <p><strong>Pseudo Discord :</strong> <%= app.pseudo %></p>
+                <p><strong>ID Discord :</strong> <%= app.discordId %></p>
+                <p><strong>Nom & Prénom RP :</strong> <%= app.personnage %></p>
+                <p><strong>Type :</strong> <%= app.typePersonnage %></p>
+                <p><strong>Background RP :</strong> <a href="<%= app.background %>" target="_blank"><%= app.background %></a></p>
+                <p><strong>Motivation :</strong> <%= app.motivation %></p>
+
+                <form action="/moderators/treatment" method="POST">
+                  <input type="hidden" name="id" value="<%= app.id %>">
+                  <label>Note sur 20 :</label>
+                  <input type="number" name="note" min="0" max="20" required style="width: 60px; margin: 0 10px;">
+                  <button type="submit" name="action" value="accepter">✅ Accepter</button>
+                  <button type="submit" name="action" value="refuser">❌ Refuser</button>
+                </form>
+              </div>
+            <% }) %>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Bloc : Ensemble des WL -->
+      <div class="category-block" id="block-finale">
+        <h2 class="category-title">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="toggle-icon fa-solid fa-angle-down" data-target="wl-section" style="cursor: pointer; color: #f1c40f;"></i>
+            <span>📦 Ensemble des WL</span>
+          </div>
+          <span class="search-inline">
+            <i class="fa fa-search search-icon"></i>
+            <input type="text" placeholder="Rechercher..." onkeyup="filterCards(this, 'block-finale')">
+          </span>
+        </h2>
+
+        <div id="wl-section" style="display: none;">
+          <% const finales = applications.filter(app => app.statut === 'finale'); %>
+          <% const moyenne = finales.length > 0 ? (finales.reduce((acc, curr) => acc + (curr.note || 0), 0) / finales.length).toFixed(1) : null; %>
+
+          <% if (finales.length === 0) { %>
+            <p>Aucune WL traitée avec note pour le moment.</p>
+          <% } else { %>
+            <div style="text-align: center; margin-bottom: 30px;">
+              <p style="font-size: 1.2em;">
+                🎯 <strong>Moyenne générale :</strong>
+                <span style="background-color: #333; padding: 6px 14px; border-radius: 8px; color: #ffd700; font-weight: bold;">
+                  <%= moyenne %>/20
+                </span>
+              </p>
+            </div>
+
+            <% finales.forEach(app => { %>
+              <div class="candidature-card">
+                <form action="/moderators/delete" method="POST">
+                  <input type="hidden" name="id" value="<%= app.id %>">
+                  <button type="submit" class="delete-btn" title="Supprimer cette candidature">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </form>
+                <p><strong>Pseudo Discord :</strong> <%= app.pseudo %></p>
+                <p><strong>ID Discord :</strong> <%= app.discordId %></p>
+                <p><strong>Nom & Prénom RP :</strong> <%= app.personnage %></p>
+                <p><strong>Type :</strong> <%= app.typePersonnage %></p>
+                <% const noteClass = app.note >= 15 ? 'bonne' : 'mauvaise'; %>
+                <p><strong>Note attribuée :</strong> <span class="note <%= noteClass %>"><%= app.note %>/20</span></p>
+              </div>
+            <% }) %>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <%- include('partials/footer') %>
+
+
+  <script>
+    // 🔽/🔼 Repli/Dépli pour toutes les sections avec icône
+    document.querySelectorAll('.toggle-icon').forEach(icon => {
+      const targetId = icon.dataset.target;
+      const target = document.getElementById(targetId);
+
+      icon.addEventListener('click', () => {
+        const isVisible = target.style.display === 'block';
+        target.style.display = isVisible ? 'none' : 'block';
+        icon.classList.toggle('fa-angle-down');
+        icon.classList.toggle('fa-angle-up');
+      });
+    });
+
+    function filterCards(input, categoryId) {
+      const filter = input.value.toLowerCase();
+      const categoryBlock = document.getElementById(categoryId);
+      const cards = categoryBlock.getElementsByClassName('candidature-card');
+      Array.from(cards).forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(filter) ? '' : 'none';
+      });
+    }
+
+    const searchIcons = document.querySelectorAll('.search-icon');
+    searchIcons.forEach(icon => {
+      icon.addEventListener('mouseenter', () => icon.style.transform = 'scale(1.2)');
+      icon.addEventListener('mouseleave', () => icon.style.transform = 'scale(1)');
+    });
+
+    document.querySelectorAll('#wl-section .delete-btn').forEach(button => {
+      button.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const form = button.closest('form');
+        const id = form.querySelector('input[name="id"]').value;
+
+        const confirmed = confirm("Êtes-vous sûr de vouloir supprimer cette candidature ?");
+        if (!confirmed) return;
+
+        const response = await fetch('/moderators/delete', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `id=${encodeURIComponent(id)}`
+        });
+
+        if (response.ok) {
+          form.closest('.candidature-card').remove();
+        } else {
+          alert("❌ Une erreur est survenue lors de la suppression.");
+        }
+      });
+    });
+  </script>
+</body>
+</html>

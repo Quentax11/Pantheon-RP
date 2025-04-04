@@ -1,0 +1,187 @@
+/* Fond sombre avec transparence et effet de focus */
+body {
+  font-family: 'Arial', sans-serif;
+  background: url('/images/prp2.png') no-repeat center center fixed;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+  color: #f1f1f1;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: -1;
+}
+
+/* Conteneur principal */
+.form-container {
+  max-width: 900px;
+  margin: 80px auto;
+  padding: 40px;
+  background-color: rgba(0, 0, 0, 0.75);
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+/* Titre général */
+.form-container h1 {
+  text-align: center;
+  color: #ffd700;
+  margin-bottom: 30px;
+  font-size: 1.8em;
+}
+
+/* TITRE DE CATÉGORIE */
+.category-block {
+  margin-bottom: 50px;
+}
+
+.category-title {
+  color: #f1c40f;
+  font-size: 1.4em;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f1c40f;
+  padding-bottom: 8px;
+}
+
+/* Bloc candidature */
+.candidature-card {
+  border: 1px solid #444;
+  padding: 20px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Texte */
+.candidature-card p {
+  margin: 5px 0;
+  color: #ddd;
+}
+
+.candidature-card strong {
+  color: #fff;
+}
+
+/* Lien vers background */
+.candidature-card a {
+  color: #ffd700;
+  text-decoration: underline;
+}
+
+/* Boutons */
+.candidature-card form {
+  margin-top: 15px;
+  display: inline-block;
+}
+
+.candidature-card button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin-right: 10px;
+}
+
+.candidature-card button:hover {
+  transform: scale(1.05);
+}
+
+button[name="action"][value="accepter"] {
+  background-color: #28a745;
+  color: white;
+}
+
+button[name="action"][value="refuser"] {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* === Affichage de la note avec code couleur === */
+.note {
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 1.1em;
+  display: inline-block;
+  margin-top: 10px;
+  background-color: #444;
+  color: white;
+}
+
+.note.bonne {
+  background-color: #28a745; /* vert */
+  color: white;
+}
+
+.note.mauvaise {
+  background-color: #dc3545; /* rouge */
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-container {
+    margin: 30px 20px;
+    padding: 20px;
+  }
+}
+#wl-section {
+  transition: all 0.3s ease;
+}
+/* === Corbeille alignée à droite === */
+.candidature-card {
+  position: relative;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.delete-btn:hover {
+  transform: scale(1.2);
+  color: #ff6b6b;
+}
+
+/* === Recherche intégrée dans le titre === */
+.category-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-inline input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #f1c40f;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #f1f1f1;
+  outline: none;
+}
+
+.search-inline i {
+  color: #f1c40f;
+  font-size: 1.2em;
+}

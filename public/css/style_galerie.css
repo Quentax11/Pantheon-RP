@@ -1,0 +1,78 @@
+/* Pas besoin de redéfinir le body ici (fond déjà dans style_global.css) */
+
+/* Conteneur principal */
+.gallery-container {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 40px;
+  background-color: rgba(0, 0, 0, 0.75);
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  flex: 1;
+}
+
+/* Titre */
+.gallery-container h1 {
+  text-align: center;
+  color: #ffd700;
+  margin-bottom: 30px;
+}
+
+/* Grille galerie */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Image/Vidéo */
+.gallery-item {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.gallery-item img,
+.gallery-item video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .gallery-container {
+    margin: 30px 20px;
+    padding: 20px;
+  }
+}
+
+.admin-box {
+  background-color: rgba(255, 215, 0, 0.1);
+  border: 2px solid #ffc107;
+  color: #ffc107;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.upload-link {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 8px 15px;
+  background-color: #ffc107;
+  color: #000;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.upload-link:hover {
+  background-color: #e0a800;
+  transform: scale(1.05);
+}

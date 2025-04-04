@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Pantheon RP</title>
+  <link rel="stylesheet" href="/css/style_global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <header>
+    <h1>PANTHEON RP</h1>
+    <p>Serveur Whitelist | Serious RP</p>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="/">Accueil</a></li>
+      <li><a href="/candidature">Formulaire WL</a></li>
+      <li><a href="/galerie">Galerie</a></li>
+      <li><a href="https://sites.google.com/view/pantheonwl/accueil-illégal" target="_blank">Règlement</a></li>
+      <li><a href="https://discord.gg/2aDRnCXMYz" target="_blank">Notre Discord</a></li>
+      <li><a href="/espace-staff" class="staff-link">Espace Staff</a></li>
+    </ul>
+  </nav>
+
+  <% if (isAuthenticated && user) { %>
+    <div class="user-profile">
+      <div class="user-info">
+        <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="Avatar" class="avatar">
+        <span class="username"><%= user.username %></span>
+
+        <% if (isModerator) { %>
+          <span class="moderator-badge">
+            <i class="fas fa-user-shield"></i> Modérateur
+          </span>
+        <% } %>
+
+        <div class="dropdown">
+          <ul>
+            <li><a href="/logout" class="logout-btn">🔓 Se déconnecter</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- IMPORTANT : Ouvre ici ton main-content -->
+  <div class="main-content">

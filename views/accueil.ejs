@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Accueil - Pantheon RP</title>
+  <link rel="stylesheet" href="/css/style_global.css">
+  <link rel="stylesheet" href="/css/style_accueil.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      color: #f1f1f1;
+      background: url('/images/pantheon.png') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto auto auto;
+      grid-template-areas:
+        "bienvenue presentation"
+        "conditions conditions"
+        ". ."
+        "slider slider";
+      row-gap: 60px;
+      padding: 60px 40px;
+      max-width: 1400px;
+      margin: auto;
+    }
+
+    .box {
+      background-color: rgba(0, 0, 0, 0.75);
+      border-radius: 10px;
+      padding: 60px 50px;
+      font-size: 1.1em;
+    }
+
+    .box h2 {
+      font-size: 2.2em;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #f1f1f1;
+      padding-bottom: 10px;
+      text-align: center;
+    }
+
+    .bienvenue {
+      grid-area: bienvenue;
+    }
+
+    .presentation {
+      grid-area: presentation;
+    }
+
+    .conditions-box {
+      grid-area: conditions;
+      background-color: rgba(10, 10, 30, 0.9);
+      padding: 30px 50px;
+      min-height: 140px;
+    }
+
+    .conditions {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 30px;
+      padding-top: 10px;
+    }
+
+    .condition {
+      text-align: center;
+      min-width: 200px;
+    }
+
+    .condition i {
+      font-size: 3em;
+      color: #ffc107;
+    }
+
+    .slider {
+      grid-area: slider;
+      width: calc(100% - 80px);
+      max-width: 1320px;
+      margin: 0 auto 80px;
+      overflow: hidden;
+      border-radius: 10px;
+      position: relative;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .slides {
+      display: flex;
+      width: 400%;
+      animation: slide 16s infinite;
+    }
+
+    .slides img {
+      width: 100%;
+      height: auto;
+    }
+
+    @keyframes slide {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-100%); }
+      50% { transform: translateX(-200%); }
+      75% { transform: translateX(-300%); }
+      100% { transform: translateX(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <%- include('partials/header') %>
+
+  <div class="grid-layout">
+    <div class="box bienvenue">
+      <h2>Bienvenue sur Pantheon RP</h2>
+      <p>Une immersion réaliste dans une ville française vivante et animée.</p>
+    </div>
+
+    <div class="box presentation">
+      <h2>Présentation du serveur</h2>
+      <p>Pantheon RP est un serveur Serious RP inspiré de la vie réelle dans une ville française. Notre objectif est de proposer une immersion cohérente, encadrée par une équipe de staff active et à l'écoute. Que vous soyez citoyen, entrepreneur, agent des forces de l'ordre ou du milieu illégal, chaque chemin a sa place.</p>
+      <p>La communauté est au cœur de notre projet : respect, créativité, et qualité de jeu sont nos priorités.</p>
+    </div>
+
+    <div class="box conditions-box">
+      <h2>Conditions pour la WhiteList</h2>
+      <div class="conditions">
+        <div class="condition">
+          <i class="fas fa-user"></i>
+          <p>Être âgé de 15 ans minimum</p>
+        </div>
+        <div class="condition">
+          <i class="fas fa-language"></i>
+          <p>Maîtriser le français (oral & écrit)</p>
+        </div>
+        <div class="condition">
+          <i class="fas fa-check-circle"></i>
+          <p>Réussir l'examen d'entrée</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slider">
+      <div class="slides">
+        <img src="https://via.placeholder.com/800x400?text=Image+1" alt="Slide 1">
+        <img src="https://via.placeholder.com/800x400?text=Image+2" alt="Slide 2">
+        <img src="https://via.placeholder.com/800x400?text=Image+3" alt="Slide 3">
+        <img src="https://via.placeholder.com/800x400?text=Image+4" alt="Slide 4">
+      </div>
+    </div>
+  </div>
+
+  <%- include('partials/footer') %>
+
+</body>
+</html>

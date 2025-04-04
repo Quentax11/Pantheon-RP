@@ -1,0 +1,104 @@
+/* Plus besoin de body ici, déjà défini dans style_global.css */
+
+/* Grille principale */
+.grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 60px auto 60px auto;
+  grid-template-areas:
+    "bienvenue presentation"
+    ". ."
+    "conditions conditions"
+    ". ."
+    "slider slider";
+  gap: 0px;
+  padding: 60px 40px 40px;
+  max-width: 1400px;
+  margin: auto;
+  flex: 1;
+}
+
+/* Boîte générale */
+.box {
+  background-color: rgba(0, 0, 0, 0.75);
+  border-radius: 10px;
+  padding: 60px 50px;
+  font-size: 1.1em;
+  height: 100%;
+}
+
+/* Titres */
+.box h2 {
+  font-size: 2.2em;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f1f1f1;
+  padding-bottom: 10px;
+  text-align: center;
+}
+
+/* Positionnement spécifique */
+.bienvenue {
+  grid-area: bienvenue;
+}
+
+.presentation {
+  grid-area: presentation;
+}
+
+.conditions-box {
+  grid-area: conditions;
+  background-color: rgba(10, 10, 30, 0.9);
+  padding: 30px 50px;
+  min-height: 140px;
+  margin-top: 40px;
+}
+
+/* Conditions : icônes + textes */
+.conditions {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding-top: 10px;
+}
+
+.condition {
+  text-align: center;
+  min-width: 200px;
+}
+
+.condition i {
+  font-size: 3em;
+  color: #ffc107;
+}
+
+/* Slider images */
+.slider {
+  grid-area: slider;
+  width: 100%;
+  margin: 40px auto 80px;
+  overflow: hidden;
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.slides {
+  display: flex;
+  width: 400%;
+  animation: slide 16s infinite;
+}
+
+.slides img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+@keyframes slide {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(-100%); }
+  50%  { transform: translateX(-200%); }
+  75%  { transform: translateX(-300%); }
+  100% { transform: translateX(0); }
+}

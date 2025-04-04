@@ -1,0 +1,215 @@
+/* === HTML et Body configuration pour footer collé === */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* === Fond général avec image de fond et overlay sombre === */
+body {
+  background: url('/images/pantheon.png') no-repeat center center fixed;
+  background-size: cover;
+  font-family: 'Arial', sans-serif;
+  color: #f1f1f1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 100vh; /* ajout important */
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Overlay sombre */
+  z-index: -1;
+}
+
+/* === Header === */
+header {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 30px 0;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 3em;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+header p {
+  margin: 10px 0 0;
+  font-size: 1.2em;
+  color: #ccc;
+}
+
+/* === Navigation === */
+nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 20px auto;
+  text-align: center;
+}
+
+nav ul li {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: white;
+  font-size: 1.2em;
+  padding: 10px 20px;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+}
+
+nav ul li a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+nav ul li a.staff-link {
+  background-color: #ffc107;
+  color: #000;
+  font-weight: bold;
+  border: 2px solid #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+nav ul li a.staff-link:hover {
+  background-color: #e0a800;
+  transform: scale(1.05);
+}
+
+/* === Profil utilisateur === */
+.user-profile {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.user-info {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.user-info .avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  border: 2px solid #ffd700;
+}
+
+.user-info .username {
+  color: #fff;
+  font-weight: bold;
+}
+
+.user-info:hover .dropdown {
+  display: block;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background-color: #222;
+  border: 1px solid #444;
+  border-radius: 5px;
+  min-width: 150px;
+  z-index: 100;
+}
+
+.logout-btn {
+  background-color: #dc3545;
+  color: white !important;
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 5px 10px;
+  text-align: center;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.logout-btn:hover {
+  background-color: #c82333;
+  box-shadow: 0 0 10px rgba(220, 53, 69, 0.6);
+  transform: scale(1.05);
+}
+
+.moderator-badge {
+  background-color: #ffc107;
+  color: #000;
+  font-size: 0.75em;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-left: 10px;
+  box-shadow: 0 0 5px rgba(255, 215, 0, 0.6);
+}
+
+/* === Bloc Accès refusé centré === */
+.main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 20px;
+}
+
+.access-denied-box {
+  background: rgba(0, 0, 0, 0.85);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+  animation: fadeInScale 0.6s ease-out;
+}
+
+/* === Footer === */
+footer {
+  background-color: rgba(0, 0, 0, 0.9);
+  color: #ccc;
+  padding: 15px 0;
+  text-align: center;
+  width: 100%;
+  font-size: 0.9em;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin-top: auto;
+}
+
+footer p {
+  margin: 0;
+  padding: 5px;
+}
+
+/* === Animation fade-in pour le bloc accès refusé === */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
