@@ -11,11 +11,11 @@ const axios = require('axios');
 const multer = require('multer');
 const fs = require('fs');
 
-// Initialisation de l'application Express
+// Express
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 8080;
 
-// Définir EJS comme moteur de vues
+// EJS 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -23,7 +23,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
-// Configuration de multer pour les uploads
+// Configuration de multer 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/uploads/galerie/');
@@ -47,30 +47,40 @@ const upload = multer({
   }
 });
 
-// Configuration MySQL
 const dbConfig = {
-  host: 'localhost',
-  user: 'root',
-  password: 'Chausette-11',
-  database: 'whitelist_fivem'
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 3306
 };
+
 const connection = mysql.createConnection(dbConfig);
+
 connection.connect(err => {
   if (err) {
-    console.error("Erreur de connexion à MySQL:", err);
+    console.error("❌ Erreur de connexion à MySQL:", err);
     return;
   }
-  console.log("Connecté à MySQL");
+  console.log("✅ Connecté à la base MySQL Railway");
 });
 
-// Session
+// 
 const sessionStore = new MySQLStore({}, connection);
+
+
 app.use(session({
-  secret: 'tonSecretDeSession',
+  secret: 'pantheonSecretUltraSecure123',
   store: sessionStore,
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 86400000 }
+  proxy: true, 
+  cookie: {
+    maxAge: 86400000,
+    secure: true,     
+    httpOnly: true,
+    sameSite: 'none'    
+  }
 }));
 
 // Auth Discord
@@ -81,23 +91,37 @@ passport.use(new DiscordStrategy({
   scope: ['identify', 'guilds', 'guilds.members.read']
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    // Appel API Discord pour récupérer les rôles du user dans le serveur
-    const response = await axios.get(`https://discord.com/api/v10/users/@me/guilds/${process.env.DISCORD_GUILD_ID}/member`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
+    console.log("🔐 Début authentification Discord pour :", profile.username);
+
+    
+    const response = await axios.get(
+      `https://discord.com/api/v10/users/@me/guilds/${process.env.DISCORD_GUILD_ID}/member`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
       }
-    });
+    );
 
     const member = response.data;
     const hasStaffRole = member.roles.includes(process.env.DISCORD_STAFF_ROLE_ID);
 
-    profile.isModerator = hasStaffRole; // ✅ Ajoute la propriété à l'utilisateur
+    console.log("✅ Utilisateur dans le serveur Discord. Rôles :", member.roles);
+    console.log("🔍 isModerator :", hasStaffRole);
+
+    profile.isModerator = hasStaffRole;
     return done(null, profile);
+
   } catch (err) {
-    console.error("Erreur lors de la récupération du membre Discord :", err);
-    return done(err, profile);
+    console.error("❌ Erreur Discord API (probablement pas membre du serveur) :", err.response?.data || err.message);
+
+    
+    profile.isModerator = false;
+    return done(null, profile);
   }
 }));
+
+
 
 
 passport.serializeUser((user, done) => done(null, user));
@@ -109,7 +133,7 @@ passport.deserializeUser((user, done) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Middleware global pour rendre user, isAuthenticated et isModerator dispo dans toutes les vues EJS
+// Middleware global 
 app.use((req, res, next) => {
   res.locals.user = req.user || null;
   res.locals.isAuthenticated = req.isAuthenticated();
@@ -159,10 +183,19 @@ app.get('/auth/discord', (req, res, next) => {
   passport.authenticate('discord')(req, res, next);
 });
 
+
 app.get('/auth/discord/callback', passport.authenticate('discord', {
-  failureRedirect: '/login'
+  failureRedirect: '/login' // En cas d’échec d’authentification
 }), (req, res) => {
+  
+  console.log("✅ Route /auth/discord/callback atteinte !");
+  console.log("👤 Utilisateur connecté :", req.user?.username || 'Utilisateur inconnu');
+
+  
   const redirectURL = req.session.redirectAfterLogin || '/';
+  console.log("🔁 Redirection prévue vers :", redirectURL);
+
+  
   delete req.session.redirectAfterLogin;
   res.redirect(redirectURL);
 });
@@ -205,7 +238,7 @@ app.post('/candidature', (req, res) => {
       return res.send("Vous avez déjà une candidature en cours. Merci de patienter.");
     }
 
-    // Sinon, insertion normale
+    
     const { pseudo, birthdate, experience, personnage, typePersonnage, background, motivation } = req.body;
     const insertQuery = 'INSERT INTO candidatures (pseudo, discordId, birthdate, experience, personnage, typePersonnage, background, motivation) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
     connection.query(insertQuery, [pseudo, discordId, birthdate, experience, personnage, typePersonnage, background, motivation], (err) => {
@@ -237,7 +270,7 @@ app.post('/login', (req, res) => {
 
   if (username === process.env.MODERATOR_USERNAME && password === process.env.MODERATOR_PASSWORD) {
     req.session.isModerator = true;
-    res.redirect('/moderators'); // ❌ ancienne route
+    res.redirect('/moderators'); 
   } else {
     res.send('Identifiants incorrects');
   }
@@ -320,7 +353,7 @@ app.post('/moderators/treatment', isLoggedIn, (req, res) => {
         return res.redirect('/espace-staff');
       });
     } else {
-      // Cas de la première étape : accepter = passage en entretien / refuser = suppression
+      
       if (action === 'accepter') {
         const updateQuery = 'UPDATE candidatures SET statut = "entretien" WHERE id = ?';
         connection.query(updateQuery, [id], async (err) => {
@@ -384,7 +417,7 @@ app.post('/moderators/delete', isLoggedIn, (req, res) => {
       return res.status(500).json({ message: 'Erreur lors de la suppression' });
     }
 
-    // Réponse simple pour confirmer au JS que la suppression est ok
+    
     res.sendStatus(200);
   });
 });
@@ -396,7 +429,7 @@ app.get('/espace-staff', (req, res) => {
     return res.redirect('/auth/discord');
   }
 
-  // Si l'utilisateur est connecté mais n'est pas modérateur
+  
   if (!req.user?.isModerator) {
     return res.status(403).render('access-denied', {
       user: req.user,
@@ -405,7 +438,7 @@ app.get('/espace-staff', (req, res) => {
     });
   }
 
-  // Si c’est un modérateur → affichage normal
+  
   const query = 'SELECT * FROM candidatures ORDER BY id DESC';
   connection.query(query, (err, results) => {
     if (err) {
@@ -450,12 +483,12 @@ app.get('/galerie', (req, res) => {
     }
 
     const isAuthenticated = req.isAuthenticated && req.isAuthenticated();
-    const isModerator = req.user?.isModerator === true; // ✅ ici la vraie vérification
+    const isModerator = req.user?.isModerator === true; 
 
     res.render('galerie', {
       user: req.user,
       isAuthenticated,
-      isModerator, // ✅ bien passé ici
+      isModerator, 
       currentPage: 'galerie',
       medias: results
     });
@@ -465,7 +498,7 @@ app.get('/galerie', (req, res) => {
 
 // Page admin de gestion de la galerie
 app.get('/admin/galerie', isLoggedIn, (req, res) => {
-  // Vérifie si l'utilisateur est bien modérateur
+
   if (!req.user || !req.user.isModerator) {
     return res.status(403).render('access_denied', {
       message: "Accès réservé aux modérateurs."
@@ -517,7 +550,7 @@ app.post('/admin/galerie/delete', isLoggedIn, (req, res) => {
   const { id, filename } = req.body;
   const filePath = path.join(__dirname, 'public', 'uploads', 'galerie', filename);
 
-  // Supprimer le fichier du disque
+  
   fs.unlink(filePath, (err) => {
     if (err) console.error("Erreur suppression fichier:", err);
 
@@ -555,5 +588,6 @@ app.get('/logout', (req, res) => {
 
 // Lancement du serveur
 app.listen(port, () => {
-  console.log(`Serveur lancé sur http://localhost:${port}`);
+  console.log(`🚀 Serveur lancé sur le port ${port}`);
 });
+
