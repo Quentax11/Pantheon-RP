@@ -23,6 +23,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
 // Configuration de multer 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -585,9 +589,15 @@ app.get('/logout', (req, res) => {
   });
 });
 
-
-// IMPORTANT : Ne jamais oublier de garder le serveur en vie avec un listen propre
-const server = app.listen(process.env.PORT || 3000, () => {
-  console.log(`Serveur lancé sur le port ${server.address().port}`);
+process.on('uncaughtException', (err) => {
+  console.error('Erreur non capturée :', err);
 });
 
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Promesse non gérée :', reason);
+});
+
+// IMPORTANT : Ne jamais oublier de garder le serveur en vie avec un listen propre
+const server = app.listen(process.env.PORT || 3000, '0.0.0.0', () => {
+  console.log(`✅ Serveur lancé sur le port ${server.address().port}`);
+});
