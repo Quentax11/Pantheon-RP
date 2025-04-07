@@ -586,8 +586,8 @@ app.get('/logout', (req, res) => {
 });
 
 
-// Lancement du serveur
-app.listen(port, () => {
-  console.log(`🚀 Serveur lancé sur le port ${port}`);
+// IMPORTANT : Ne jamais oublier de garder le serveur en vie avec un listen propre
+const server = app.listen(process.env.PORT || 3000, () => {
+  console.log(`Serveur lancé sur le port ${server.address().port}`);
 });
 
