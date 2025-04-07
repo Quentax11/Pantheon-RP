@@ -11,23 +11,21 @@ const axios = require('axios');
 const multer = require('multer');
 const fs = require('fs');
 
-// Express
 const app = express();
 const port = process.env.PORT || 8080;
 
-// EJS 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Middleware pour fichiers statiques
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
+
+app.get('/', (req, res) => res.redirect('/accueil'));
 
 app.get('/ping', (req, res) => {
   res.status(200).send('pong');
 });
 
-// Configuration de multer 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/uploads/galerie/');
@@ -63,31 +61,28 @@ const connection = mysql.createConnection(dbConfig);
 
 connection.connect(err => {
   if (err) {
-    console.error("❌ Erreur de connexion à MySQL:", err);
+    console.error("Erreur de connexion à MySQL:", err);
     return;
   }
-  console.log("✅ Connecté à la base MySQL Railway");
+  console.log("Connecté à la base MySQL Railway");
 });
 
-// 
 const sessionStore = new MySQLStore({}, connection);
-
 
 app.use(session({
   secret: 'pantheonSecretUltraSecure123',
   store: sessionStore,
   resave: false,
   saveUninitialized: false,
-  proxy: true, 
+  proxy: true,
   cookie: {
     maxAge: 86400000,
-    secure: true,     
+    secure: true,
     httpOnly: true,
-    sameSite: 'none'    
+    sameSite: 'none'
   }
 }));
 
-// Auth Discord
 passport.use(new DiscordStrategy({
   clientID: process.env.DISCORD_CLIENT_ID,
   clientSecret: process.env.DISCORD_CLIENT_SECRET,
@@ -95,9 +90,6 @@ passport.use(new DiscordStrategy({
   scope: ['identify', 'guilds', 'guilds.members.read']
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    console.log("🔐 Début authentification Discord pour :", profile.username);
-
-    
     const response = await axios.get(
       `https://discord.com/api/v10/users/@me/guilds/${process.env.DISCORD_GUILD_ID}/member`,
       {
@@ -106,38 +98,23 @@ passport.use(new DiscordStrategy({
         }
       }
     );
-
     const member = response.data;
     const hasStaffRole = member.roles.includes(process.env.DISCORD_STAFF_ROLE_ID);
-
-    console.log("✅ Utilisateur dans le serveur Discord. Rôles :", member.roles);
-    console.log("🔍 isModerator :", hasStaffRole);
-
     profile.isModerator = hasStaffRole;
     return done(null, profile);
-
   } catch (err) {
-    console.error("❌ Erreur Discord API (probablement pas membre du serveur) :", err.response?.data || err.message);
-
-    
+    console.error("Erreur Discord API:", err.response?.data || err.message);
     profile.isModerator = false;
     return done(null, profile);
   }
 }));
 
-
-
-
 passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => {
-  done(null, user);
-});
-
+passport.deserializeUser((user, done) => done(null, user));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Middleware global 
 app.use((req, res, next) => {
   res.locals.user = req.user || null;
   res.locals.isAuthenticated = req.isAuthenticated();
@@ -145,8 +122,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
-// Middlewares
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) return next();
   req.session.redirectAfterLogin = req.originalUrl;
@@ -158,14 +133,12 @@ function isStaff(req, res, next) {
     const userGuilds = req.user.guilds || [];
     const staffRole = 'Staff';
     let hasStaffRole = false;
-
     for (let guild of userGuilds) {
       if (guild.roles && Array.isArray(guild.roles)) {
         hasStaffRole = guild.roles.includes(staffRole);
       }
       if (hasStaffRole) break;
     }
-
     return hasStaffRole ? next() : res.redirect('/');
   }
   res.redirect('/auth/discord');
@@ -589,6 +562,15 @@ app.get('/logout', (req, res) => {
   });
 });
 
+const server = app.listen(process.env.PORT || 3000, '0.0.0.0', () => {
+  console.log(`✅ Serveur lancé sur le port ${server.address().port}`);
+  console.log('App is ready and listening');
+});
+
+setInterval(() => {
+  console.log("🔄 Keep-alive ping...");
+}, 60000);
+
 process.on('uncaughtException', (err) => {
   console.error('Erreur non capturée :', err);
 });
@@ -597,7 +579,3 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Promesse non gérée :', reason);
 });
 
-// IMPORTANT : Ne jamais oublier de garder le serveur en vie avec un listen propre
-const server = app.listen(process.env.PORT || 3000, '0.0.0.0', () => {
-  console.log(`✅ Serveur lancé sur le port ${server.address().port}`);
-});
